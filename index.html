@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links de Clientes Futurotec</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilo para a barra de rolagem */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 font-sans">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-white mb-2">Lista de Clientes</h1>
+            <p class="text-gray-400">Clique em um nome para ser redirecionado.</p>
+        </header>
+
+        <!-- Barra de Pesquisa -->
+        <div class="mb-6 sticky top-4 z-10">
+            <input type="text" id="searchInput" onkeyup="filterClients()" placeholder="Pesquisar cliente..." class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
+        </div>
+
+        <!-- Lista de Clientes -->
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+            <ul id="clientList" class="divide-y divide-gray-700">
+                <!-- Os clientes serão inseridos aqui via JavaScript -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const clients = [
+            "futurotec_actcon", "futurotec_aliar", "futurotec_escallo-dev-thalles", "futurotec_bdi-eunapolis", 
+            "futurotec_bdi-portoseguro", "futurotec_bioimagem", "futurotec_bioscan-apart", "futurotec_bioscan-campogrande",
+            "futurotec_bioscan-meridional", "futurotec_caciquehomecenter", "futurotec_cartaodetodos", "futurotec_cartaodetodos-valedoaco",
+            "futurotec_cartaodetodos-vca", "futurotec_cedof", "futurotec_clinicagr2", "futurotec_cdm", "futurotec_cedus",
+            "futurotec_tenda-crt", "futurotec_cepem", "futurotec_hospitaldeolhossaomateusvisaocenter-76eb02", "futurotec_cig",
+            "futurotec_cipalam-voip", "futurotec_diagmed-1c95d8", "futurotec_vilaricadiagnosticos-d5b742", "futurotec_radmedsp-c36f9f",
+            "futurotec_clinica-rossetti", "futurotec_clirad", "futurotec_conect-cacula", "futurotec_igepinstitutodegastroenterologiaendoscop-91d3c1",
+            "futurotec_centrocor-4fabd4", "futurotec_crd", "futurotec_crya", "futurotec_davirezende", "futurotec_delfos",
+            "futurotec_diagnostik", "futurotec_dimagem", "futurotec_dimedi", "futurotec_dopsom", "futurotec_endoscopia",
+            "futurotec_imavidadiagnostica-50da89", "futurotec_evoluir", "futurotec_examina-filial", "futurotec_examina",
+            "futurotec_santacasadesantos-13c4dc", "futurotec_centrodaimagem", "futurotec_fullpneus", "futurotec_hospitalcoracaodovale-89d00d",
+            "futurotec_futurofone-breno", "futurotec_digimedradiograph-9d7214", "futurotec_futurofone-dev1", "futurotec_uddiagnosticoporimagempb-82fe80",
+            "futurotec_gastroclinica-d4656b", "futurotec_amorsaudeararuama-cf329c", "futurotec_cedeco", "futurotec_genesis",
+            "futurotec_giganet", "futurotec_clinicaantoniofrancisco-e08330", "futurotec_gtcon-sp", "futurotec_gtcon-tto",
+            "futurotec_hjv-callcenter", "futurotec_hjv", "futurotec_hospital-acidentados", "futurotec_hsh", "futurotec_hsm",
+            "futurotec_ibmed", "futurotec_clinicacotrel-ba3f5f", "futurotec_lume-c37335", "futurotec_ieb", "futurotec_tutti",
+            "futurotec_imedi", "futurotec_imagoradiologiaodontologicabelem-a04f43", "futurotec_tomografiasaojoseltda-e8f070",
+            "futurotec_indiana-crt", "futurotec_clinicasantamariarj-69bb66", "futurotec_indiana-ipn", "futurotec_xleme-4e2612",
+            "futurotec_ultramedrj-b4041e", "futurotec_dimagem-rj", "futurotec_indiana-txf", "futurotec_unimagepr-4d4785",
+            "futurotec_iop", "futurotec_irrp", "futurotec_clinicaguarani-8b6d3f", "futurotec_radiologiacarazinho-11610a",
+            "futurotec_imagediagnose-71a331", "futurotec_lifecenter", "futurotec_unieroradiologiaodontologica-19528e",
+            "futurotec_hmdiagnostico-df2504", "futurotec_magnus", "futurotec_sosmedicinaesaude-56fa10", "futurotec_medical",
+            "futurotec_medicine", "futurotec_medimagem", "futurotec_amorsaudesuzano-a66abc", "futurotec_megaimagem",
+            "futurotec_medimagemsp-fc0fcd", "futurotec_mirra", "futurotec_novanet", "futurotec_nucleobh", "futurotec_nucleo-fabriciano",
+            "futurotec_nucleo", "futurotec_nwsoftware", "futurotec_odontoscan", "futurotec_orthopride", "futurotec_laboratoriomullersociedadesimplesltda-c837c4",
+            "futurotec_aximagem-012aea", "futurotec_paladino", "futurotec_plinc", "futurotec_pneus-cacique",
+            "futurotec_novaeradiagnosticos-181220", "futurotec_pro-saude", "futurotec_radiologica", "futurotec_radmed",
+            "futurotec_rdxavier", "futurotec_sao-judas-tto", "futurotec_saomarcelo", "futurotec_segmedic",
+            "futurotec_escallo-dev-arthur-zatta", "futurotec_cintilogdiagnosticos-34fcfc", "futurotec_hubxcatanduva-6bae72",
+            "futurotec_vistax-3bbe18", "futurotec_asgo-amorsaudecamposdosgoytacazes-affe87", "futurotec_escallo-dev-max",
+            "futurotec_solucoes-adm", "futurotec_susga", "futurotec_clinicajulianapaladinorj-ed0934", "futurotec_tenda-gvs",
+            "futurotec_tenda-ipn", "futurotec_tenda-mc", "futurotec_clinicajanicelamasradiologia-9bc70a", "futurotec_msdiagnosticosmedicos-3f052a",
+            "futurotec_medscan-3d370a", "futurotec_amorsaude-gravata", "futurotec_unimag", "futurotec_unimed-hmu",
+            "futurotec_nossanet", "futurotec_unimed-ned-ipn", "futurotec_unimed-operadora", "futurotec_vegas",
+            "futurotec_vegas-novaodessa", "futurotec_villagro", "futurotec_vivaprev", "futurotec_proimagemressonanciaetomografiaes-1c1f1c",
+            "futurotec_clinicamarcelamattos-f557c0", "futurotec_hinja", "futurotec_brnettecnologiaeservicosltda-8f8838",
+            "futurotec_centrodeneurofisiologiadegoianiassltda-760a19", "futurotec_healthmap", "futurotec_tomovale",
+            "futurotec_ibn", "futurotec_cdm-caldasnovas", "futurotec_biogastro", "futurotec_nitidadiagnosticoporimagem-9df9ff",
+            "futurotec_ultramed", "futurotec_cardiocheckup-18e158", "futurotec_cedim", "futurotec_medvida",
+            "futurotec_francoferprodutossiderurgicosltda-764ba2", "futurotec_escallo-dev-tiago", "futurotec_medicalsantaines",
+            "futurotec_duodiagnosticos-a64976", "futurotec_pontoalto", "futurotec_cdcnuclear-1d98d9", "futurotec_sicoobcosmipa-8aec48",
+            "futurotec_paxdomini", "futurotec_hmg-ssnetuno-55408b", "futurotec_bild", "futurotec_indiana-televendas",
+            "futurotec_impi", "futurotec_hmg-ssvenus-310913", "futurotec_hmg-ssurano-81713c", "futurotec_supranet",
+            "futurotec_labexlaboratoriosdeexamesltdasc-b539b4", "futurotec_ciccentrodeimagemcanoinhas-2342c5",
+            "futurotec_imrinstitutomarquesderadiologia-fdaf8f", "futurotec_onelaudosdiagnosticosmedicos-c42c03",
+            "futurotec_institutoderadiologiadrhugolinoandradelt-491259", "futurotec_crgclinicaradiologicadegoiania-42e462",
+            "futurotec_maissaudego-9b0165", "futurotec_viaimagem-6df7ec", "futurotec_oftalmologiaintegrada",
+            "futurotec_hubxchapadao-7ccb18", "futurotec_cotemig", "futurotec_lbmclinicaradiologicadrlaurobaptistamach-17b6b0",
+            "futurotec_scoppdiagnosticos-37a8b1", "futurotec_alfadiagnosticos-89d61d", "futurotec_cliged-f1cc12",
+            "futurotec_hospitalunimednortefluminense-137306", "futurotec_arandusaude-bd1e16", "futurotec_iscandiagnosticoodontologicoporimagem-16642d",
+            "futurotec_institutoes-campogrande", "futurotec_institutoes-hemodinamica", "futurotec_institutoes-enseada",
+            "futurotec_diagnosticcenter", "futurotec_clinicacristinastefanon-2a044c", "futurotec_hmg-clinicaserena-651a37",
+            "futurotec_tecnofire", "futurotec_indiana-gvs", "futurotec_ekosom", "futurotec_clinicagedda-416930",
+            "futurotec_vivastelecom", "futurotec_ultracenter", "futurotec_escallo-dev-eliphas", "futurotec_medicalbalsas",
+            "futurotec_clinicadaherunidadepiracanjuba-7248a6", "futurotec_hospitalsamaritano-edfd87", "futurotec_urbipaygestaodebeneficiosltda-1fe11e",
+            "futurotec_futurofone-ramon", "futurotec_nefroclinicaclinicadedoencasrenaisltda-a1731b", "futurotec_dvinsurance-058daf",
+            "futurotec_clinicadofuturo", "futurotec_fsfx", "futurotec_akc", "futurotec_saomatheus-callcenter",
+            "futurotec_distrimed", "futurotec_eladiagnosticosltda-c6ca01", "futurotec_freigaspar-260e30", "futurotec_pixel",
+            "futurotec_clinicadeimagemlucidioportella-1126d5", "futurotec_saomatheus", "futurotec_imede-17e95b",
+            "futurotec_lifeimagem", "futurotec_ceofzonanorte-c9a99b", "futurotec_centerx", "futurotec_clinicabomjesus-f3449b",
+            "futurotec_cducentrodediagnosticosunimed-6ed88b", "futurotec_escallo-lab-1", "futurotec_cdi-salvador",
+            "futurotec_plasticandocirurgiaplastica-1974fc", "futurotec_saomarcelo-oeste", "futurotec_hospitalcotefi-4ebc50",
+            "futurotec_clinica-nris", "futurotec_v-track", "futurotec_hospitalsilvestre-10e99d", "futurotec_cdipetrolina-1d854c",
+            "futurotec_crb-imagem", "futurotec_max-planet", "futurotec_soldiagnosticos", "futurotec_imdimagnusitajuba-51c316",
+            "futurotec_tomoclinica", "futurotec_escallo-lab-3", "futurotec_hmg-ssjupiter-59ccec",
+            "futurotec_imaginusservicodediagnosticoporimagem-f76165", "futurotec_anatoscan", "futurotec_clinicadofuturoprd-f0f710",
+            "futurotec_amorsaude-caruaru", "futurotec_clinicaimagemplena-a56538", "futurotec_cmp", "futurotec_cad",
+            "futurotec_sdiservicodediagnosticoporimagem-4a77fe", "futurotec_cliaod", "futurotec_lbb", "futurotec_meddiagnostico-0e829f",
+            "futurotec_clinicaaro", "futurotec_amorsaude-jequie", "futurotec_hubxmineiros-73f4f6", "futurotec_clinicadofuturo-hmg",
+            "futurotec_provida", "futurotec_cjv-guaranta", "futurotec_cgd", "futurotec_novimagem", "futurotec_cdeexclusive-d89963",
+            "futurotec_lifeclinic-e197eb", "futurotec_crbimagem", "futurotec_escallo-hmg-produtos", "futurotec_vtrack",
+            "futurotec_maxplanet", "futurotec_dermobarra", "futurotec_clinicaimagem-caratinga", "futurotec_nest",
+            "futurotec_hubxrioclaro-6f7a31", "futurotec_orthodontic-cc4f16", "futurotec_imagenscuiaba-16ef28",
+            "futurotec_amorsaudesamambaia-df", "futurotec_pmi", "futurotec_aapi", "futurotec_amorsaude-messejana",
+            "futurotec_csfx", "futurotec_imesono-d6e892", "futurotec_centrocomunitariolenatuppan-195012", "futurotec_cartaodetodos-araras",
+            "futurotec_hubxbatatais-f86161", "futurotec_climaclinicadeimagem-03f17b", "futurotec_amorsaude-araras",
+            "futurotec_duovet", "futurotec_pmi-smas", "futurotec_escallo-dev-gomes", "futurotec_valemix",
+            "futurotec_hubxtocantins-41c7c4", "futurotec_ultracor", "futurotec_radiologiaespecializadaderibeiraopreto-5e6d59",
+            "futurotec_ricardosanchessp-fe80ae", "futurotec_hubxriopardo-c4cbcc", "futurotec_bhoftalmo-61569d",
+            "futurotec_fsfx-gnet", "futurotec_nmultifibra", "futurotec_centrodaimagem-vicosa", "futurotec_gamaimagem-4ce381",
+            "futurotec_drogariahebinho", "futurotec_provisao", "futurotec_ioptohospitalortopedico-72b992",
+            "futurotec_psiconeurocentroespecializadoemneurodese-87931c", "futurotec_ceico", "futurotec_cardioadvance-f483c7",
+            "futurotec_institutosocialsaudeprime-75ab17", "futurotec_radiologia-tannus", "futurotec_cartaodetodos-sac",
+            "futurotec_dremerson", "futurotec_nucleodiagnosticospi-79386f", "futurotec_imesono-061b39", "futurotec_iomr",
+            "futurotec_viverbem", "futurotec_cdediagnosticoporimagem-6ebff3", "futurotec_saojosedoavai", "futurotec_petdetodos-5ecac3",
+            "futurotec_cardioplaza-845f43", "futurotec_hospitalsantaluzia-3b10dc", "futurotec_matrixmedicinadiagnosticaltda-675a7f",
+            "futurotec_clinicaimagemsp-572670", "futurotec_cdacentrodediagnosticoaracruz-a2b0f5", "futurotec_clinicadoamanha",
+            "futurotec_unimedpelotasrs-ea7f4f", "futurotec_examinimedicinadiagnostica-1bd8b9", "futurotec_bioimagem-novaserrana",
+            "futurotec_multimagem-ro", "futurotec_incar", "futurotec_hospital-saopaulo", "futurotec_centroclinico-peruibe",
+            "futurotec_medimagem-cachoeiro", "futurotec_sorocabavacinas", "futurotec_nucleodigestivo", "futurotec_asgo-eunapolis",
+            "futurotec_spxdiagnosticosporimagem-748218", "futurotec_endfit", "futurotec_gtcon-cloud", "futurotec_telelaudotecnologiamedicaltda-3dbb50",
+            "futurotec_iage", "futurotec_cri-itumbiara", "futurotec_cdacentrodediagnosticoaparecida-b2a65d",
+            "futurotec_cincoestrelasprimecentroautomotivo-5339c3", "futurotec_maxxisaude-0c8f58", "futurotec_voxel",
+            "futurotec_araujo", "futurotec_santaelisa", "futurotec_clinicadofuturohmg-725e48", "futurotec_garoto",
+            "futurotec_cartaodetodos-caruaru", "futurotec_amorsaude-palmas", "futurotec_cartaodetodos-camacari",
+            "futurotec_amorsaude-salvador", "futurotec_andro", "futurotec_cocobambu", "futurotec_clinicamatteoni",
+            "futurotec_amorsaude-laurodefreitas", "futurotec_portasabertas", "futurotec_ctocentrodetraumatologiaeortopedia-871b91",
+            "futurotec_escallo-dev-jonas", "futurotec_imedmedicinadiagnosticato-d3a742", "futurotec_clinicaibis",
+            "futurotec_nucliemedicinanuclear-354fa9", "futurotec_amorsaude-juazeiro", "futurotec_labo", "futurotec_sonimed",
+            "futurotec_villelapedras", "futurotec_corpusmagsul", "futurotec_radscan", "futurotec_escallo-academy",
+            "futurotec_voxelmg-3d49a8", "futurotec_escallo-molde", "futurotec_liohospitaldeolhos-4f7a92", "futurotec_clinica-diagnose",
+            "futurotec_udi-diagnosticos", "futurotec_medicinadiagnosticagroupsa-4b33e0", "futurotec_libre", "futurotec_ecoclinica",
+            "futurotec_angiocorporeinstitutodemedicinacardiovas-cf8632", "futurotec_hospitaldeolhosyano-8823bb",
+            "futurotec_asgo-santoantonio", "futurotec_escallo-demo", "futurotec_starnet-cloud", "futurotec_ecoclinica-cloud",
+            "futurotec_bigcard-9c8f8a", "futurotec_anatomiapatologiadiagnostica-00abd6", "futurotec_orthopride-niu",
+            "futurotec_rm-padua", "futurotec_megaimagem-mt", "futurotec_dratania", "futurotec_medimagem-es",
+            "futurotec_hubxgestaoempresarialltda-b70cc9", "futurotec_escallo-dev-ramon", "futurotec_institutoderadiologia-cascavel",
+            "futurotec_radscan-itapemirim", "futurotec_cemedicentrodemedicinadiagnosticaporimag-3c250e", "futurotec_escallo-dev-janisson",
+            "futurotec_centromedicopraiadocanto-5bdec8", "futurotec_cetam", "futurotec_clinicaimagem-catalao",
+            "futurotec_farmain", "futurotec_nonoveiculos", "futurotec_cliniprevdiagnosticos-36f7bf", "futurotec_hospitaldafoa-8a3325",
+            "futurotec_afbndes-cloud", "futurotec_asgo-amorsaudesinop-4a05d3", "futurotec_institutodeolhoseduardopaulino-8d94ea",
+            "futurotec_institutoes-vilavelha", "futurotec_escallo-dev-andre-alves", "futurotec_pulsarcardiologiaesaude-50f630",
+            "futurotec_hmg-ssmarte-858136", "futurotec_clinica-apice", "futurotec_amorsaude-feiradesantana",
+            "futurotec_indiana-matriz", "futurotec_ciim", "futurotec_escallo-sentinela-sandbox", "futurotec_hmg-ssmercurio-6844e1",
+            "futurotec_cartaodetodosmarica-19b098", "futurotec_radiologuers-c1814d", "futurotec_amorsaude-novomondubim",
+            "futurotec_hmg-sssaturno-6202ca", "futurotec_hmg-ssterra-65a4cf", "futurotec_signet", "futurotec_escallo-app",
+            "futurotec_farmaciabrito", "futurotec_wkve", "futurotec_renatagomes", "futurotec_ctr", "futurotec_cdi-bh",
+            "futurotec_mamaimagemsp-10e400", "futurotec_centromedico-conselheiro", "futurotec_escallo-dev-marlon",
+            "futurotec_oftalmoclinica-5edece", "futurotec_dioclinica-cloud", "futurotec_dopsom-cloud", "futurotec_otto",
+            "futurotec_escallo-dev-cleverson", "futurotec_amdsaudeunidademaraba-80acc4", "futurotec_clinicadaimagem",
+            "futurotec_conrad", "futurotec_asgo-amorsaudetaboaodaserra-00698a", "futurotec_amorsaude-vca", "futurotec_clinicacuc",
+            "futurotec_cdl-timoteo", "futurotec_sante-cloud", "futurotec_magnecamp-cloud", "futurotec_magnetto-cloud",
+            "futurotec_asgo-amorsaudemarica-f5f635", "futurotec_ctgo-jaraguadosul", "futurotec_funcef", "futurotec_ctgo-saoluis",
+            "futurotec_hochospitalortopedicodeceres-dd96ba", "futurotec_saolucas", "futurotec_cartaodetodos-cabula",
+            "futurotec_humanadiagnosticos-f86758", "futurotec_hospitaldorim", "futurotec_amorsaude-alagoinhas",
+            "futurotec_wrconstrutora", "futurotec_institutodoaparelhodigestivogo-330e9c", "futurotec_diagnoseceres",
+            "futurotec_crp", "futurotec_santi", "futurotec_ebrinformatica-52f46f", "futurotec_santamonicaimagemrs-406683",
+            "futurotec_endohealthgustavofrancklinendocrinologis-16f8ae", "futurotec_clinicaesplanada", "futurotec_amorsaude-ourinhos",
+            "futurotec_silvasaleshomecenter", "futurotec_amorsaude-joaopessoa", "futurotec_escallo-dev-fillipe-barcelos",
+            "futurotec_labormed", "futurotec_ctcmg", "futurotec_provida-rj", "futurotec_hospital-santoantonio",
+            "futurotec_laboratorio-de-vita", "futurotec_grupo-jpp", "futurotec_escallo-dev-antonio", "futurotec_texwork",
+            "futurotec_medrad", "futurotec_amorsaude-petrolina", "futurotec_unimedtresvales", "futurotec_ndnucleodiagnostico",
+            "futurotec_cartaodetodos-sac-hmg", "futurotec_clinicaradiologicadesantos", "futurotec_augeoftalmologia",
+            "futurotec_multiclin", "futurotec_ultrimagem-uba", "futurotec_ctgo-guarapari", "futurotec_clinica-netpacs",
+            "futurotec_dmx-scan", "futurotec_clinrad", "futurotec_radioclinica", "futurotec_fisiotrauma-3e1313",
+            "futurotec_climagem", "futurotec_cartaodetodos-ouvidoria", "futurotec_cartaodetodos-televendas",
+            "futurotec_escallo-dev-ramon-eqn", "futurotec_irpp", "futurotec_instituto-saudeassistida", "futurotec_cdi-colatina",
+            "futurotec_amorsaude-hortolandia", "futurotec_inside", "futurotec_raiosom", "futurotec_angioneuro",
+            "futurotec_medxaraguari", "futurotec_saudevida", "futurotec_sensumed", "futurotec_clinicapedrocavalcanti-20dd0a",
+            "futurotec_cdmineiros", "futurotec_clinica-imago", "futurotec_hospitalevangelicobh", "futurotec_proimagem",
+            "futurotec_imaxdiagnostico", "futurotec_ssacontagem", "futurotec_elcenter", "futurotec_radiomaster",
+            "futurotec_iscan", "futurotec_cdi-goiania", "futurotec_digma", "futurotec_romcard", "futurotec_crpii",
+            "futurotec_clinicasaocamilo-c6ee5e", "futurotec_aura", "futurotec_cartaodetodos-paripe",
+            "futurotec_escallo-hmg-supporthealth", "futurotec_perfecta", "futurotec_cdi-manhuacu", "futurotec_gastro",
+            "futurotec_amorsaude-ilheus", "futurotec_cartaodetodos-salvadorcentro", "futurotec_nucleodeendoscopiadigestiva",
+            "futurotec_luminiprivilege", "futurotec_cartaodetodospauloafonso-cdfd66", "futurotec_cartaodetodos-salvadortanque",
+            "futurotec_cartaodetodosamorsauderealengo-5becc7", "futurotec_ncbnucleocardiologicodebrasilia-0eed76",
+            "futurotec_cardiocenter-tocantins", "futurotec_cimentoelo", "futurotec_gastromedbh-cc5ef9",
+            "futurotec_cedifi-ed288a", "futurotec_drsaude-f2fc57", "futurotec_eparkestacionamentos-fb91cd",
+            "futurotec_plenitudeespacointegrado-66765b", "futurotec_cartaomultimais-1f61d4", "futurotec_asgo-credeal-hmg-1698ea",
+            "futurotec_sonhagrofranchisingltda-aea144", "futurotec_clinicadaimagemto-eba5bb", "futurotec_asgo-amorsaudeestancia-315929",
+            "futurotec_escritaassessoriacontabilltda-bc38e8", "futurotec_ecomedservicosmedicosltda-2d41c5"
+        ];
+        
+        const clientList = document.getElementById('clientList');
+
+        // Função para criar e adicionar os itens da lista
+        function renderList(clientsToRender) {
+            clientList.innerHTML = ''; // Limpa a lista atual
+            if (clientsToRender.length === 0) {
+                clientList.innerHTML = `<li class="px-4 sm:px-6 py-4 text-center text-gray-500">Nenhum cliente encontrado.</li>`;
+                return;
+            }
+            clientsToRender.forEach(client => {
+                const subdomain = client.replace('futurotec_', '');
+                const url = `https://${subdomain}.escallo.com.br/escallo`;
+
+                const listItem = document.createElement('li');
+                listItem.className = 'px-4 sm:px-6 py-4 flex items-center justify-between hover:bg-gray-700/50 transition duration-300';
+                
+                listItem.innerHTML = `
+                    <a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 w-full truncate">
+                        ${client}
+                    </a>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 ml-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                `;
+                clientList.appendChild(listItem);
+            });
+        }
+
+        // Função para filtrar os clientes
+        function filterClients() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            
+            const filteredClients = clients.filter(client => {
+                return client.toLowerCase().includes(filter);
+            });
+
+            renderList(filteredClients);
+        }
+        
+        // Renderiza a lista inicial quando a página carrega
+        document.addEventListener('DOMContentLoaded', () => {
+            renderList(clients);
+        });
+
+    </script>
+
+</body>
+</html>
